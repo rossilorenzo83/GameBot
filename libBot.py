@@ -9,7 +9,7 @@ import os
 import sys
 
 class screenOpts:
-    windowName = "NoxPlayer"
+    windowName = "Conquest"
     x_min = 0
     y_min = 0
     x_max = 0
@@ -18,7 +18,7 @@ class screenOpts:
     y_len = 0
     dim_sum = 0
     window = 0
-    debug = 0
+    debug = 1
 
 def grabGameWindow(screenOpts,Yoffset=0,YbottomOffset=0):
     if Yoffset + YbottomOffset >= screenOpts.y_len:
@@ -31,7 +31,8 @@ def grabGameWindow(screenOpts,Yoffset=0,YbottomOffset=0):
 
 def findImgOnScreen(screenOpts, template_img, threshold=0.8, Yoffset=0, YbottomOffset=0):
     img_rgb = cv2.cvtColor(np.array(grabGameWindow(screenOpts,Yoffset,YbottomOffset)), cv2.COLOR_RGB2BGR)
-    template = cv2.imread(template_img)
+    template = cv2.cvtColor(np.array(cv2.imread(template_img)), cv2.COLOR_RGB2BGR)
+
     w, h = template.shape[:-1]
     res = cv2.matchTemplate(img_rgb, template, cv2.TM_CCOEFF_NORMED)
     loc = np.where(res >= threshold)
@@ -47,8 +48,8 @@ def findImgOnScreen(screenOpts, template_img, threshold=0.8, Yoffset=0, YbottomO
         return click
     print(template_img + " not found on screen")
     return 0
-
 def clickAbsolute(screenOpts,x=(0, 0),delay=0.5):
+
     updateWindow(screenOpts)
     win32api.SetCursorPos(x)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0)
